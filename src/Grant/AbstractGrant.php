@@ -309,15 +309,20 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Converts a scopes query string to an array to easily iterate for validation.
      *
-     * @param string $scopes
+     * @param string|array $scopes
      *
      * @return array
      */
     private function convertScopesQueryStringToArray($scopes)
     {
-        return \array_filter(\explode(self::SCOPE_DELIMITER_STRING, \trim($scopes)), function ($scope) {
-            return !empty($scope);
-        });
+        if (is_string($scopes)) {
+            return \array_filter(\explode(self::SCOPE_DELIMITER_STRING, \trim($scopes)), function ($scope) {
+                return !empty($scope);
+            });
+        }
+        
+        $scopes = (array)json_decode(json_encode($scopes), true);
+        return array_map('trim', $scopes);
     }
 
     /**
